@@ -2,11 +2,11 @@ package crypto_currencies;
 
 import crypto_currencies.currencies_retrieval.CurrencyInformationRetriever;
 
-import static crypto_currencies.CurrenciesShortNames.USD;
+import static crypto_currencies.AllCurrenciesShortNames.USD;
 
 public abstract class Currency {
 
-    protected CurrenciesShortNames currentCurrencyShortNames;
+    protected AllCurrenciesShortNames currentCurrencyShortNames;
     protected CurrencyInformationRetriever currencyInformationRetriever;
 
     public Currency(CurrencyInformationRetriever currencyInformationRetriever) {
@@ -17,7 +17,7 @@ public abstract class Currency {
         return getLiveValue(USD);
     }
 
-    public Float getLiveValue(CurrenciesShortNames currencyComparedTo) {
-        return currencyInformationRetriever.getLiveValue(currentCurrencyShortNames, currencyComparedTo);
+    public Float getLiveValue(AllCurrenciesShortNames currencyComparedFrom) {
+        return currencyInformationRetriever.getLiveValue(currencyComparedFrom, currentCurrencyShortNames);
     }
 }

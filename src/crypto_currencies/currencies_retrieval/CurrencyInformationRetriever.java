@@ -1,9 +1,9 @@
 package crypto_currencies.currencies_retrieval;
 
-import crypto_currencies.CurrenciesShortNames;
+import crypto_currencies.AllCurrenciesShortNames;
 
 public interface CurrencyInformationRetriever {
 
-    public Float getLiveValue(CurrenciesShortNames currencyComparedFrom, CurrenciesShortNames currencyComparedTo);
-    public void changeCurrencyComparedTo(CurrenciesShortNames shortNames);
+    public Float getLiveValue(AllCurrenciesShortNames currencyComparedFrom, AllCurrenciesShortNames currencyComparedTo);
+    public void changeCurrencyComparedTo(AllCurrenciesShortNames shortNames);
 }
