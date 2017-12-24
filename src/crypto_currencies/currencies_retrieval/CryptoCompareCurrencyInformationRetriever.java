@@ -6,14 +6,13 @@ import crypto_currencies.AllCurrenciesShortNames;
 public class CryptoCompareCurrencyInformationRetriever implements CurrencyInformationRetriever {
 
     @Override
-    public Float getLiveValue(AllCurrenciesShortNames currencyComparedFrom, AllCurrenciesShortNames currencyComparedTo) {
-        System.out.println(URLConnection.getRequest("https://min-api.cryptocompare.com/data/price?fsym=" +
-            currencyComparedFrom + "&tsyms=" + currencyComparedTo));
-        return null;
+    public double getLiveExchange(AllCurrenciesShortNames currencyComparedFrom) {
+        System.out.println(URLConnection.getRequest("https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=" + currencyComparedFrom));
+        return -1;
     }
 
     @Override
-    public void changeCurrencyComparedTo(AllCurrenciesShortNames shortNames) {
+    public void setDataUpdatingRate(long timeInMilliseconds) {
 
     }
 }
