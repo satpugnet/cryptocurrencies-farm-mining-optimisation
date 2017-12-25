@@ -15,4 +15,9 @@ public class CryptoCompareCurrencyInformationRetriever implements CurrencyInform
     public void setDataUpdatingRate(long timeInMilliseconds) {
 
     }
+
+    @Override
+    public double getDifficulty(AllCurrenciesShortNames currentCurrencyShortNames) {
+        return 0;
+    }
 }

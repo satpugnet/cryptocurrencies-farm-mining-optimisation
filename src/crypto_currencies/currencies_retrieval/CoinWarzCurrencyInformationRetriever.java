@@ -32,6 +32,13 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
         return exchangeRate;
     }
 
+    @Override
+    public double getDifficulty(AllCurrenciesShortNames currentCurrencyShortNames) {
+        double difficulty = findInformationInData(currentCurrencyShortNames.toString(), "Difficulty");
+        logger.info("Getting a difficulty for " + currentCurrencyShortNames + " of " + difficulty);
+        return difficulty;
+    }
+
     private double findInformationInData(String CoinToFind, String valueToCompare) {
         try {
             JSONObject response = getProfitabilityData();
@@ -53,9 +60,10 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
 
     }
 
+
     private JSONObject getProfitabilityData(){
         if(System.currentTimeMillis() - lastUpdate > updateRate) {
-            logger.error("Re-updating the profitability data value");
+            logger.info("Re-updating the profitability data value");
             try {
                 profitabilityData = new JSONObject("{}");
                 profitabilityData = new JSONObject(URLConnection.getRequest("https://www.coinwarz.com/v1/api/profitability/?apikey=fc2b8d6412954170a9b1901c2c177566&algo=all"));

@@ -14,4 +14,8 @@ public abstract class Currency {
     public double getLiveValue() {
         return currencyInformationRetriever.getLiveExchange(currentCurrencyShortNames);
     }
+
+    public double getDifficulty() {
+        return currencyInformationRetriever.getDifficulty(currentCurrencyShortNames);
+    }
 }

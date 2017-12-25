@@ -6,4 +6,5 @@ public interface CurrencyInformationRetriever {
 
     public double getLiveExchange(AllCurrenciesShortNames currencyComparedFrom);
     public void setDataUpdatingRate(long timeInMilliseconds);
+    double getDifficulty(AllCurrenciesShortNames currentCurrencyShortNames);
 }
