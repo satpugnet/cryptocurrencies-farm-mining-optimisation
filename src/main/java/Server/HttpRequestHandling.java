@@ -49,8 +49,6 @@ public class HttpRequestHandling {
 
             MiningConfiguration responseConfig = new CryptoCurrencyOptimalMiningConfigHandler().handle(dataExchangeMedium);
             String response = responseConfig.toJson().toString();
-            //TODO: remove next line
-            response = response + "tests";
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
