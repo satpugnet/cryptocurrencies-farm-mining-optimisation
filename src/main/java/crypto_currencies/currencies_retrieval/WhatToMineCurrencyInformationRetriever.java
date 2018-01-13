@@ -69,7 +69,6 @@ public class WhatToMineCurrencyInformationRetriever implements CurrencyInformati
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(json);
         return json;
     }
 

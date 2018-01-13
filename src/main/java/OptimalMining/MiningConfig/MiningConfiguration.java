@@ -24,14 +24,12 @@ public class MiningConfiguration implements Configuration {
 
     public JSONObject toJson() {
         JSONObject finalObject = new JSONObject();
-        System.out.println(currenciesToMine);
         try {
             finalObject.put("activateMining", activateMining);
             finalObject.put("currenciesToMine", toStringList(currenciesToMine));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(finalObject);
         return finalObject;
     }
 
