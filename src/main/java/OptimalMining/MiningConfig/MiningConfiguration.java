@@ -3,13 +3,12 @@ package OptimalMining.MiningConfig;
 import OptimalMining.Configuration;
 import crypto_currencies.CurrenciesShortName;
 import lombok.Data;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //TODO
 @Data
@@ -28,12 +27,15 @@ public class MiningConfiguration implements Configuration {
         System.out.println(currenciesToMine);
         try {
             finalObject.put("activateMining", activateMining);
-            JSONArray jsonArrayCurrenciesToMine = new JSONArray(currenciesToMine);
-            finalObject.put("currenciesToMine", Arrays.asList("test", "test2"));
+            finalObject.put("currenciesToMine", toStringList(currenciesToMine));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         System.out.println(finalObject);
         return finalObject;
+    }
+
+    private List<String> toStringList(List<CurrenciesShortName> originalList) {
+        return originalList.stream().map(Enum::toString).collect(Collectors.toList());
     }
 }
