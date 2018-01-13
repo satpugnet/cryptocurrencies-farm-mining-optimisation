@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class MiningConfiguration implements Configuration {
         try {
             finalObject.put("activateMining", activateMining);
             JSONArray jsonArrayCurrenciesToMine = new JSONArray(currenciesToMine);
-            finalObject.put("currenciesToMine", jsonArrayCurrenciesToMine);
+            finalObject.put("currenciesToMine", Arrays.asList("test", "test2"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
