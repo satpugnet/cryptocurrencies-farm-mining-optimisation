@@ -4,7 +4,7 @@ import crypto_currencies.currencies_retrieval.CurrencyInformationRetriever;
 
 public abstract class Currency {
 
-    protected AllCurrenciesShortNames currentCurrencyShortNames;
+    protected CurrenciesShortName currentCurrencyShortNames;
     protected CurrencyInformationRetriever currencyInformationRetriever;
 
     public Currency(CurrencyInformationRetriever currencyInformationRetriever) {

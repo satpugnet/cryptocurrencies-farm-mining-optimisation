@@ -11,12 +11,16 @@ public class Main {
     private final static Logger logger = Logger.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
-        String portOption = args[0];
         int portValue = 8000;
-        if(portOption != null && portOption.equals("--port")) {
-            portValue = Integer.parseInt(args[1]);
+        if(args.length != 0) {
+            String portOption = args[0];
+            if(portOption != null && portOption.equals("--port")) {
+                portValue = Integer.parseInt(args[1]);
+            } else {
+                logger.warn("No port given in the command line parameters, using default of " + portValue);
+            }
         } else {
-            logger.warn("No port given in the command line parameters, using default of " + portValue);
+            logger.warn("No parameter given in the command line parameters, using default with port " + portValue);
         }
         HttpRequestHandling.startServer(portValue);
     }

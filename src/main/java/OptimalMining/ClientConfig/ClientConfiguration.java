@@ -2,7 +2,7 @@ package OptimalMining.ClientConfig;
 
 import OptimalMining.Configuration;
 import Server.dataExchangeAnalyser.DataExchangeMedium;
-import crypto_currencies.AllCurrenciesShortNames;
+import crypto_currencies.CurrenciesShortName;
 import lombok.Data;
 import org.json.JSONObject;
 
@@ -28,7 +28,7 @@ public class ClientConfiguration implements Configuration {
         for (int i = 0; i < currencyBenchMarking.size(); i++) {
             Map<String, String> currentMap = currencyBenchMarking.get(i);
             CurrencyBenchMarking currentCurrencyBenchMarking = CurrencyBenchMarking.builder()
-                .currenciesShortNames(AllCurrenciesShortNames.valueOf(currentMap.get("currencyShortName")))
+                .currenciesShortNames(CurrenciesShortName.valueOf(currentMap.get("currencyShortName")))
                 .hashRate(Double.parseDouble(currentMap.get("hashRate")))
                 .build();
             this.currencyBenchMarkings.add(currentCurrencyBenchMarking);
