@@ -63,6 +63,7 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
 
     @Override
     public List<CurrenciesShortName> getOrderedListRecommendedMining() {
+        logger.info("CoinWarz, Getting an ordered list of recommended mining cryptocurrencies");
         try {
             List<CurrenciesShortName> currencies = new LinkedList<>();
             JSONObject response = getProfitabilityData();
@@ -71,6 +72,7 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
                 JSONObject currentCoin = allCoinData.getJSONObject(i);
                 currencies.add(CurrenciesShortName.valueOf(currentCoin.getString("CoinTag")));
             }
+            logger.info("CoinWarz, Completed the getting of an ordered list of recommended mining cryptocurrencies: " + currencies);
             return currencies;
         } catch (JSONException e) {
             e.printStackTrace();
