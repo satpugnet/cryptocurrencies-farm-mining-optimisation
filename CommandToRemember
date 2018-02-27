@@ -1,2 +1,2 @@
-curl -v --request POST 'https://agile-spire-46056.herokuapp.com/' --data '{"userId":"test", "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'
+curl -v --request POST 'https://crypto-mining-optimisation.herokuapp.com/' --data '{"userId":"test", "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'
 curl -v --request POST 'http://localhost:8000/' --data '{"userId":"test", "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'

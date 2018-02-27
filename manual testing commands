@@ -1,1 +1,0 @@
-curl -v --request POST 'https://agile-spire-46056.herokuapp.com/' --data '{"userId":"test", "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'

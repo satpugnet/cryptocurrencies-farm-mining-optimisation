@@ -15,15 +15,15 @@ import java.util.Map;
 public class ClientConfiguration implements Configuration {
 
     private OS osType = OS.linux;
-    List<CurrencyBenchMarking> currencyBenchMarkings = new LinkedList<>();
+    private List<CurrencyBenchMarking> currencyBenchMarkings = new LinkedList<>();
 
     public ClientConfiguration(DataExchangeMedium clientConfigJson) {
         setupOsType(clientConfigJson);
         setupCurrencyBenchMarking(clientConfigJson);
     }
 
-    private void setupCurrencyBenchMarking(DataExchangeMedium clientConfigJson) {
-        List<Map<String, String>> currencyBenchMarking = clientConfigJson.getCurrencyBenchMarking();
+    private void setupCurrencyBenchMarking(DataExchangeMedium dataExchangeMedium) {
+        List<Map<String, String>> currencyBenchMarking = dataExchangeMedium.getCurrencyBenchMarking();
 
         for (int i = 0; i < currencyBenchMarking.size(); i++) {
             Map<String, String> currentMap = currencyBenchMarking.get(i);
