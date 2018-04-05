@@ -1,6 +1,6 @@
 package OptimalMining.OptimalMiningConfigCalculation;
 
-importgi OptimalMining.ClientConfig.ClientConfiguration;
+import OptimalMining.ClientConfig.ClientConfiguration;
 import OptimalMining.ClientDashBoard.ClientDashBoardConfiguration;
 import OptimalMining.MiningConfig.MiningConfiguration;
 import crypto_currencies.CurrenciesShortName;
