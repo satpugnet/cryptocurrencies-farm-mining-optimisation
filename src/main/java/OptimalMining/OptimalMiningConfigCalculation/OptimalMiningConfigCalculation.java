@@ -1,6 +1,6 @@
 package OptimalMining.OptimalMiningConfigCalculation;
 
-import OptimalMining.ClientConfig.ClientConfiguration;
+importgi OptimalMining.ClientConfig.ClientConfiguration;
 import OptimalMining.ClientDashBoard.ClientDashBoardConfiguration;
 import OptimalMining.MiningConfig.MiningConfiguration;
 import crypto_currencies.CurrenciesShortName;
@@ -15,6 +15,7 @@ public class OptimalMiningConfigCalculation {
 
         List<CurrenciesShortName> currenciesShortName = currencyInformationRetriever.getOrderedListRecommendedMining();
         miningConfig.setCurrenciesToMine(currenciesShortName);
+        miningConfig.setActivateMining(clientDashBoardConfiguration.isActivateMining());
 
         return miningConfig;
     }

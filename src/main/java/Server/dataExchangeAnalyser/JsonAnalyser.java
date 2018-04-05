@@ -22,9 +22,9 @@ public class JsonAnalyser implements DataExchangeMedium {
     }
 
     @Override
-    public String getUserId() {
+    public String getUserEmail() {
         try {
-            return jsonObject.getString("userId");
+            return jsonObject.getString("userEmail");
         } catch (JSONException e) {
             e.printStackTrace();
         }

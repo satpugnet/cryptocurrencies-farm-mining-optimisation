@@ -1,1 +1,9 @@
 # cryptocurrencies-farm-mining-optimisation
+
+## Linux/Mac
+curl -v --request POST 'https://crypto-mining-optimisation.herokuapp.com/' --data '{"userEmail":"saturnin.13@hotmail.fr", "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'
+curl -v --request POST 'http://localhost:8000/' --data '{"userEmail":"saturnin.13@hotmail.fr", "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'
+
+## Windows
+Invoke-WebRequest 'https://crypto-mining-optimisation.herokuapp.com/' -Method 'POST' -Body "{userEmail:'saturnin.13@hotmail.fr',data:{sysconfig:{OS:'linux'},benchMarking:[]}}"
+Invoke-WebRequest 'http://localhost:8000/' -Method 'POST' -Body "{userEmail:'saturnin.13@hotmail.fr',data:{sysconfig:{OS:'linux'},benchMarking:[]}}"

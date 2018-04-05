@@ -13,7 +13,7 @@ public class CryptoCurrencyOptimalMiningConfigHandler implements Handler {
     @Override
     public MiningConfiguration handle(DataExchangeMedium requestData) {
         // TODO: add dashboard interface (electricity cost and consumption)
-        ClientDashBoardConfiguration clientDashBoardConfiguration = new ClientDashBoardConfiguration();
+        ClientDashBoardConfiguration clientDashBoardConfiguration = new ClientDashBoardConfiguration(requestData.getUserEmail());
         ClientConfiguration clientConfig = new ClientConfiguration(requestData);
         OptimalMiningConfigCalculation optimalMiningConfigCalculation = new OptimalMiningConfigCalculation();
         CoinWarzCurrencyInformationRetriever coinWarzCurrencyInformationRetriever = new CoinWarzCurrencyInformationRetriever();

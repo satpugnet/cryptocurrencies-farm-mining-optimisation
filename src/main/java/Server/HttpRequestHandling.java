@@ -40,7 +40,7 @@ public class HttpRequestHandling {
             logger.info("Optimal mining config request received");
             String requestBody = IOUtils.toString(t.getRequestBody(), StandardCharsets.US_ASCII);
             DataExchangeMedium dataExchangeMedium = DataExchangeMediumFactory.getDataExchangeMedium(requestBody);
-            if (dataExchangeMedium == null || !RequestAuthorisation.hasAuthorisedId(dataExchangeMedium.getUserId(), OptimalCryptoMining)) {
+            if (dataExchangeMedium == null || !RequestAuthorisation.hasAuthorisedId(dataExchangeMedium.getUserEmail(), OptimalCryptoMining)) {
                 t.sendResponseHeaders(404, 0);
                 t.getResponseBody().close();
                 logger.warn("Unauthorised request received");
