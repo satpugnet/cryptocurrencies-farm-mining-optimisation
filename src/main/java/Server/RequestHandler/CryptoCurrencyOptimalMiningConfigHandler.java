@@ -6,6 +6,8 @@ import OptimalMining.MiningConfig.MiningConfiguration;
 import OptimalMining.OptimalMiningConfigCalculation.OptimalMiningConfigCalculation;
 import Server.dataExchangeAnalyser.DataExchangeMedium;
 import crypto_currencies.currencies_retrieval.CoinWarzCurrencyInformationRetriever;
+import crypto_currencies.currencies_retrieval.CurrencyInformationRetriever;
+import crypto_currencies.currencies_retrieval.WhatToMineCurrencyInformationRetriever;
 
 public class CryptoCurrencyOptimalMiningConfigHandler implements Handler {
 
@@ -16,7 +18,7 @@ public class CryptoCurrencyOptimalMiningConfigHandler implements Handler {
         ClientDashBoardConfiguration clientDashBoardConfiguration = new ClientDashBoardConfiguration(requestData.getUserEmail());
         ClientConfiguration clientConfig = new ClientConfiguration(requestData);
         OptimalMiningConfigCalculation optimalMiningConfigCalculation = new OptimalMiningConfigCalculation();
-        CoinWarzCurrencyInformationRetriever coinWarzCurrencyInformationRetriever = new CoinWarzCurrencyInformationRetriever();
+        CurrencyInformationRetriever coinWarzCurrencyInformationRetriever = new WhatToMineCurrencyInformationRetriever();
 
         return optimalMiningConfigCalculation.calculateOptimalConfig(clientConfig, clientDashBoardConfiguration,coinWarzCurrencyInformationRetriever);
     }

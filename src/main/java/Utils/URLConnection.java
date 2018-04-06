@@ -31,7 +31,7 @@ public class URLConnection {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Get request failed to the following url " + urlToRead);
-            return "";
+            return null;
         }
     }
 

@@ -2,6 +2,7 @@ package crypto_currencies.currencies_retrieval;
 
 import Utils.URLConnection;
 import crypto_currencies.CurrenciesShortName;
+import lombok.SneakyThrows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +14,7 @@ import java.util.List;
 import static crypto_currencies.CurrenciesShortName.BTC;
 
 // TODO: process JSON with a framework
+// TODO: remove duplication with whattomine.com
 public class CoinWarzCurrencyInformationRetriever implements CurrencyInformationRetriever {
 
     final static Logger logger = Logger.getLogger(CoinWarzCurrencyInformationRetriever.class);
@@ -62,22 +64,24 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
     }
 
     @Override
+    @SneakyThrows
     public List<CurrenciesShortName> getOrderedListRecommendedMining() {
         logger.info("CoinWarz, Getting an ordered list of recommended mining cryptocurrencies");
-        try {
-            List<CurrenciesShortName> currencies = new LinkedList<>();
-            JSONObject response = getProfitabilityData();
-            JSONArray allCoinData = response.getJSONArray("Data");
-            for (int i = 0; i < allCoinData.length(); i++) {
-                JSONObject currentCoin = allCoinData.getJSONObject(i);
-                currencies.add(CurrenciesShortName.valueOf(currentCoin.getString("CoinTag")));
+        List<CurrenciesShortName> currencies = new LinkedList<>();
+        JSONObject response = getProfitabilityData();
+        JSONArray allCoinData = response.getJSONArray("Data");
+        for (int i = 0; i < allCoinData.length(); i++) {
+            JSONObject currentCoin = allCoinData.getJSONObject(i);
+            CurrenciesShortName currenciesShortName;
+            try {
+                currenciesShortName = CurrenciesShortName.valueOf(currentCoin.getString("CoinTag"));
+            } catch (Exception e) {
+                continue;
             }
-            logger.info("CoinWarz, Completed the getting of an ordered list of recommended mining cryptocurrencies: " + currencies);
-            return currencies;
-        } catch (JSONException e) {
-            e.printStackTrace();
+            currencies.add(currenciesShortName);
         }
-        return null;
+        logger.info("CoinWarz, Completed the getting of an ordered list of recommended mining cryptocurrencies: " + currencies);
+        return currencies;
     }
 
     private double findInformationInData(String CoinToFind, String valueToCompare) {
@@ -101,8 +105,11 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
             logger.info("CoinWarz, Re-updating the profitability data value");
             try {
                 profitabilityData = new JSONObject("{}");
-                // TODO remove test request
-                profitabilityData = new JSONObject(URLConnection.getTestRequest("https://www.coinwarz.com/v1/api/profitability/?apikey=fc2b8d6412954170a9b1901c2c177566&algo=all"));
+                String request = URLConnection.getRequest("https://www.coinwarz.com/v1/api/profitability/?apikey=fc2b8d6412954170a9b1901c2c177566&algo=all");
+                if(request == null) {
+                    logger.error("Coinwarz did not reply most likely all the request allowed for a single day have been used");
+                }
+                profitabilityData = new JSONObject(request);
                 if(!profitabilityData.getBoolean("Success")) {
                     logger.error("CoinWarz, The data could not be retrieved successfully and returned with the followning message :" + profitabilityData.getString("Message"));
                 }
