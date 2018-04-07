@@ -26,7 +26,7 @@ public class DatabaseAccessor {
             sql = "SELECT * " +
                     "FROM configurations " +
                     "JOIN users ON users.id=configurations.user_id " +
-                    "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configurations_id " +
+                    "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configuration_id " +
                     "WHERE email=\'" + userEmail + "\'";
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -55,7 +55,7 @@ public class DatabaseAccessor {
             sql = "SELECT * " +
                     "FROM configurations " +
                     "JOIN users ON users.id=configurations.user_id " +
-                    "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configurations_id " +
+                    "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configuration_id " +
                     "WHERE email=\'" + userEmail + "\'";
             ResultSet rs = stmt.executeQuery(sql);
 
