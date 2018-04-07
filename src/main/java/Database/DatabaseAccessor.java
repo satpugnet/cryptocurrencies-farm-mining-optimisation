@@ -18,59 +18,87 @@ public class DatabaseAccessor {
     }
 
     public Boolean getConfigFieldBoolean(String field) {
-        try {
-            Connection conn = getConnection();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
-            Statement stmt = conn.createStatement();
+        try {
+            conn = getConnection();
+
+            stmt = conn.createStatement();
             String sql;
             sql = "SELECT * " +
                     "FROM configurations " +
                     "JOIN users ON users.id=configurations.user_id " +
                     "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configuration_id " +
                     "WHERE email=\'" + userEmail + "\'";
-            ResultSet rs = stmt.executeQuery(sql);
+            rs = stmt.executeQuery(sql);
 
             rs.next();
             Boolean fieldValue = rs.getBoolean(field);
-
-            rs.close();
-            stmt.close();
-            conn.close();
 
             return fieldValue;
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             logger.warn("SQL exception for field " + field + " in the database request");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     public String getConfigFieldString(String field) {
-        try {
-            Connection conn = getConnection();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
-            Statement stmt = conn.createStatement();
+        try {
+            conn = getConnection();
+
+            stmt = conn.createStatement();
             String sql;
             sql = "SELECT * " +
                     "FROM configurations " +
                     "JOIN users ON users.id=configurations.user_id " +
                     "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configuration_id " +
                     "WHERE email=\'" + userEmail + "\'";
-            ResultSet rs = stmt.executeQuery(sql);
+            rs = stmt.executeQuery(sql);
 
             rs.next();
             String fieldValue = rs.getString(field);
-
-            rs.close();
-            stmt.close();
-            conn.close();
 
             return fieldValue;
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             logger.warn("SQL exception for field " + field + " in the database request");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
