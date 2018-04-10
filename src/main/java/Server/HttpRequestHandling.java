@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -49,31 +50,38 @@ public class HttpRequestHandling {
         private void handleMiningConfigRequest(HttpExchange t) throws IOException {
             logger.info("Optimal mining config request received");
             // TODO: convert request body bytes to String text
-            String requestBody = IOUtils.toString(t.getRequestBody(), StandardCharsets.US_ASCII);
+            InputStream rb = t.getRequestBody();
+            String requestBody = IOUtils.toString(rb, StandardCharsets.US_ASCII);
+            rb.close();
             DataExchangeMedium dataExchangeMedium = DataExchangeMediumFactory.getDataExchangeMedium(requestBody);
             if (dataExchangeMedium == null || !RequestAuthorisation.hasAuthorisedId(dataExchangeMedium.getUserEmail(), OptimalCryptoMining)) {
                 t.sendResponseHeaders(404, 0);
                 t.getResponseBody().close();
                 logger.warn("Unauthorised request received");
                 return;
+            } else {
+                MiningConfiguration responseConfig = new CryptoCurrencyOptimalMiningConfigHandler().handle(dataExchangeMedium);
+                String response = responseConfig.toJson().toString();
+                t.sendResponseHeaders(200, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
             }
 
-            MiningConfiguration responseConfig = new CryptoCurrencyOptimalMiningConfigHandler().handle(dataExchangeMedium);
-            String response = responseConfig.toJson().toString();
-            t.sendResponseHeaders(200, response.length());
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
             logger.info("Optimal mining config request completed");
         }
 
         private void handleMiningDiagnosis(HttpExchange t) throws IOException {
             logger.info("Mining diagnosis request received");
-            String requestBody = IOUtils.toString(t.getRequestBody(), StandardCharsets.US_ASCII);
+            InputStream rb = t.getRequestBody();
+            String requestBody = IOUtils.toString(rb, StandardCharsets.US_ASCII);
+            rb.close();
             Gson g = new Gson();
             MiningDiagnosisProperties properties = g.fromJson(requestBody, MiningDiagnosisProperties.class);
             DatabaseAccessor db = new DatabaseAccessor(properties.getUserEmail());
             db.updateWorkerTable(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
+            t.sendResponseHeaders(200, 0);
+            t.getResponseBody().close();
             logger.info("Mining diagnosis request completed");
         }
     }
