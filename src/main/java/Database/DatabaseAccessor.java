@@ -59,7 +59,6 @@ public class DatabaseAccessor {
 
     public Boolean getConfigFieldBoolean(String field) {
         String booleanField = getConfigFieldString(field);
-        System.out.println("booleanField = " + booleanField);
         if(booleanField != null) {
             return booleanField.equals("t");
         }

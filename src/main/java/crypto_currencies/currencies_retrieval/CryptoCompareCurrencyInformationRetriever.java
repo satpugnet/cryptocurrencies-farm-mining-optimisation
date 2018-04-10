@@ -9,7 +9,7 @@ public class CryptoCompareCurrencyInformationRetriever implements CurrencyInform
 
     @Override
     public double getLiveExchange(CurrenciesShortName currencyComparedFrom) {
-        System.out.println(URLConnection.getRequest("https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=" + currencyComparedFrom));
+//        System.out.println(URLConnection.getRequest("https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=" + currencyComparedFrom));
         return -1;
     }
 
