@@ -7,3 +7,6 @@ curl -v --request POST 'http://localhost:8000/' --data '{"userEmail":"saturnin.1
 ## Windows
 Invoke-WebRequest 'https://crypto-mining-optimisation.herokuapp.com/' -Method 'POST' -Body "{userEmail:'saturnin.13@hotmail.fr',data:{sysconfig:{OS:'linux'},benchMarking:[]}}"
 Invoke-WebRequest 'http://localhost:8000/' -Method 'POST' -Body "{userEmail:'saturnin.13@hotmail.fr',data:{sysconfig:{OS:'linux'},benchMarking:[]}}"
+
+Invoke-WebRequest 'https://crypto-mining-optimisation.herokuapp.com/' -Method 'PUT' -Body "{userEmail:'saturnin.13@hotmail.fr',workerName:'workerPCsaturnin', currency:'BTC',hashrate:25.3}"
+Invoke-WebRequest 'http://localhost:8000/' -Method 'PUT' -Body "{userEmail:'saturnin.13@hotmail.fr',workerName:'workerPCsaturnin', currency:'BTC',hashrate:25.3}"

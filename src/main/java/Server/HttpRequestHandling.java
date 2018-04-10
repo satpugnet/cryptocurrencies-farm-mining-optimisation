@@ -1,10 +1,13 @@
 package Server;
 
+import Database.DatabaseAccessor;
 import OptimalMining.MiningConfig.MiningConfiguration;
 import Server.AccessSecurity.RequestAuthorisation;
 import Server.RequestHandler.CryptoCurrencyOptimalMiningConfigHandler;
 import Server.dataExchangeAnalyser.DataExchangeMedium;
 import Server.dataExchangeAnalyser.DataExchangeMediumFactory;
+import Server.dataExchangeAnalyser.MiningDiagnosisProperties;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -36,8 +39,16 @@ public class HttpRequestHandling {
     public static class ClientConfigOptimal implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
-            // TODO: convert request body bytes to String text
+            if(t.getRequestMethod().equalsIgnoreCase("PUT")) {
+                handleMiningDiagnosis(t);
+            } else if(t.getRequestMethod().equalsIgnoreCase("POST")){
+                handleMiningConfigRequest(t);
+            }
+        }
+
+        private void handleMiningConfigRequest(HttpExchange t) throws IOException {
             logger.info("Optimal mining config request received");
+            // TODO: convert request body bytes to String text
             String requestBody = IOUtils.toString(t.getRequestBody(), StandardCharsets.US_ASCII);
             DataExchangeMedium dataExchangeMedium = DataExchangeMediumFactory.getDataExchangeMedium(requestBody);
             if (dataExchangeMedium == null || !RequestAuthorisation.hasAuthorisedId(dataExchangeMedium.getUserEmail(), OptimalCryptoMining)) {
@@ -55,6 +66,15 @@ public class HttpRequestHandling {
             os.close();
             logger.info("Optimal mining config request completed");
         }
-    }
 
+        private void handleMiningDiagnosis(HttpExchange t) throws IOException {
+            logger.info("Mining diagnosis request received");
+            String requestBody = IOUtils.toString(t.getRequestBody(), StandardCharsets.US_ASCII);
+            Gson g = new Gson();
+            MiningDiagnosisProperties properties = g.fromJson(requestBody, MiningDiagnosisProperties.class);
+            DatabaseAccessor db = new DatabaseAccessor(properties.getUserEmail());
+            db.updateWorkerTable(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
+            logger.info("Mining diagnosis request completed");
+        }
+    }
 }

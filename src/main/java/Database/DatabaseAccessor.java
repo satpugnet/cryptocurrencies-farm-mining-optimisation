@@ -11,66 +11,70 @@ public class DatabaseAccessor {
 
     final static Logger logger = Logger.getLogger(DatabaseAccessor.class);
 
-    String userEmail;
+    private String userEmail;
+    private static Connection conn;
 
     public DatabaseAccessor(String userEmail) {
         this.userEmail = userEmail;
+        try {
+            if(conn == null) {
+                conn = getConnection();
+            }
+        } catch (URISyntaxException | SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public Boolean getConfigFieldBoolean(String field) {
-        Connection conn = null;
+    public Boolean updateWorkerTable(String workerName, String currency, Float hashrate) {
+        logger.info("Updating worker table with: " + workerName + ", " + currency + ", " + hashrate);
+
         Statement stmt = null;
         ResultSet rs = null;
+        String sql = null;
 
         try {
-            conn = getConnection();
-
             stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT * " +
-                    "FROM configurations " +
-                    "JOIN users ON users.id=configurations.user_id " +
-                    "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configuration_id " +
-                    "WHERE email=\'" + userEmail + "\'";
+            sql = "INSERT INTO workers (user_id, worker_name, mined_currency, hashrate) " +
+                    "VALUES ((SELECT id FROM users WHERE email='" + userEmail + "'), '" + workerName + "', '" + currency + "', " + hashrate + ") " +
+                    "ON CONFLICT (user_id, worker_name) " +
+                    "DO UPDATE SET user_id=(SELECT id FROM users WHERE email='" + userEmail + "'), " +
+                    "    worker_name='" + workerName + "', mined_currency='" + currency + "', hashrate=" + hashrate;
             rs = stmt.executeQuery(sql);
 
             rs.next();
-            Boolean fieldValue = rs.getBoolean(field);
 
-            return fieldValue;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+            return true;
         } catch (SQLException e) {
-            logger.warn("SQL exception for field " + field + " in the database request");
+            logger.warn("SQL exception for request " + sql + " in the database request");
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (rs != null) { rs.close(); }
+                if (stmt != null) { stmt.close(); }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return null;
+        return false;
+    }
+
+    public Boolean getConfigFieldBoolean(String field) {
+        String booleanField = getConfigFieldString(field);
+        System.out.println("booleanField = " + booleanField);
+        if(booleanField != null) {
+            return booleanField.equals("t");
+        }
+        return false;
     }
 
     public String getConfigFieldString(String field) {
-        Connection conn = null;
+        logger.info("Getting config field: " + field);
+
         Statement stmt = null;
         ResultSet rs = null;
 
         try {
-            conn = getConnection();
-
             stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT * " +
+            String sql = "SELECT * " +
                     "FROM configurations " +
                     "JOIN users ON users.id=configurations.user_id " +
                     "JOIN mined_cryptocurrencies ON configurations.id=mined_cryptocurrencies.configuration_id " +
@@ -81,21 +85,12 @@ public class DatabaseAccessor {
             String fieldValue = rs.getString(field);
 
             return fieldValue;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             logger.warn("SQL exception for field " + field + " in the database request");
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (rs != null) { rs.close(); }
+                if (stmt != null) { stmt.close(); }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
