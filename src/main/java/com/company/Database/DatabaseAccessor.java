@@ -34,16 +34,25 @@ public class DatabaseAccessor {
         logger.info("Cleaning workers table");
         String sql = "UPDATE workers SET hashrate=0.0 WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + WORKER_TABLE_DATA_TIMEOUT +  " milliseconds');";
         executeRequest(sql, UPDATE, null);
+        // TODO: clean the workers_configuration as well
     }
 
     public void insertWorkerTable(String workerName, String currency, Float hashrate) {
         logger.info("Updating worker table with: " + workerName + ", " + currency + ", " + hashrate);
+        // Create or update worker
         String sql = "INSERT INTO workers (user_id, worker_name, mined_currency, hashrate, timestamp) " +
                 "VALUES ((SELECT id FROM users WHERE email='" + userEmail + "'), '" + workerName + "', '" + currency + "', " + hashrate + ", CURRENT_TIMESTAMP) " +
                 "ON CONFLICT (user_id, worker_name) " +
                 "DO UPDATE SET user_id=(SELECT id FROM users WHERE email='" + userEmail + "'), " +
-                "    worker_name='" + workerName + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP";
-        executeRequest(sql, UPDATE, null);
+                "    worker_name='" + workerName + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP " +
+                "RETURNING workers.id";
+        String worker_id = executeRequest(sql, QUERY, "id");
+        // TODO: find a better way to initialise (no need to redo on every hashrate update) (make the client send on request when booting to create the record in the db same for workers
+        // Create workers_configuration if non-existing
+        String sql2 = "INSERT INTO workers_configuration (worker_id,activate_mining) " +
+                "VALUES (" + worker_id + ", true) " +
+                "ON CONFLICT DO NOTHING";
+        executeRequest(sql2, UPDATE, null);
     }
 
     public String getWorkerConfigFieldString(String workerName, String field) {
