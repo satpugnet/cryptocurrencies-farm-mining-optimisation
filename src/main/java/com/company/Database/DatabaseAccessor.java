@@ -48,9 +48,9 @@ public class DatabaseAccessor {
     public String getConfigFieldString(String field) {
         logger.info("Getting config field: " + field);
         String sql = "SELECT * " +
-                "FROM worker_configurations " +
-                "JOIN users ON users.id=worker_configurations.user_id " +
-                "JOIN mined_cryptocurrencies ON worker_configurations.id=mined_cryptocurrencies.configuration_id " +
+                "FROM workers_configurations " +
+                "JOIN users ON users.id=workers_configurations.user_id " +
+                "JOIN mined_cryptocurrencies ON workers_configurations.id=mined_cryptocurrencies.configuration_id " +
                 "WHERE email=\'" + userEmail + "\'";
         return executeRequest(sql, QUERY, field);
     }
