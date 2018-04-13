@@ -4,9 +4,8 @@ import com.company.Database.DatabaseAccessor;
 import com.company.OptimalMining.MiningConfig.MiningConfiguration;
 import com.company.Server.AccessSecurity.RequestAuthorisation;
 import com.company.Server.RequestHandler.CryptoCurrencyOptimalMiningConfigHandler;
-import com.company.Server.dataExchangeAnalyser.DataExchangeMedium;
-import com.company.Server.dataExchangeAnalyser.DataExchangeMediumFactory;
-import com.company.Server.dataExchangeAnalyser.MiningDiagnosisProperties;
+import com.company.Server.JsonFormat.ConfigRequest.ConfigRequestProperties;
+import com.company.Server.JsonFormat.MiningDiagnosis.MiningDiagnosisProperties;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -53,14 +52,15 @@ public class HttpRequestHandling {
             InputStream rb = t.getRequestBody();
             String requestBody = IOUtils.toString(rb, StandardCharsets.US_ASCII);
             rb.close();
-            DataExchangeMedium dataExchangeMedium = DataExchangeMediumFactory.getDataExchangeMedium(requestBody);
-            if (dataExchangeMedium == null || !RequestAuthorisation.hasAuthorisedId(dataExchangeMedium.getUserEmail(), OptimalCryptoMining)) {
+            Gson g = new Gson();
+            ConfigRequestProperties properties = g.fromJson(requestBody, ConfigRequestProperties.class);
+            if (!RequestAuthorisation.hasAuthorisedId(properties.getUserEmail(), OptimalCryptoMining)) {
                 t.sendResponseHeaders(404, 0);
                 t.getResponseBody().close();
                 logger.warn("Unauthorised request received");
                 return;
             } else {
-                MiningConfiguration responseConfig = new CryptoCurrencyOptimalMiningConfigHandler().handle(dataExchangeMedium);
+                MiningConfiguration responseConfig = new CryptoCurrencyOptimalMiningConfigHandler().handle(properties);
                 String response = responseConfig.toJson().toString();
                 t.sendResponseHeaders(200, response.length());
                 OutputStream os = t.getResponseBody();

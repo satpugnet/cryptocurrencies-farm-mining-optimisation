@@ -1,8 +1,8 @@
 package com.company.OptimalMining.OptimalMiningConfigCalculation;
 
-import com.company.OptimalMining.ClientConfig.ClientConfiguration;
 import com.company.OptimalMining.ClientDashBoard.ClientDashBoardConfiguration;
 import com.company.OptimalMining.MiningConfig.MiningConfiguration;
+import com.company.Server.JsonFormat.ConfigRequest.ConfigRequestProperties;
 import com.company.crypto_currencies.CurrenciesShortName;
 import com.company.crypto_currencies.currencies_retrieval.CurrencyInformationRetriever;
 
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class OptimalMiningConfigCalculation {
     //TODO
-    public MiningConfiguration calculateOptimalConfig(ClientConfiguration clientConfiguration, ClientDashBoardConfiguration clientDashBoardConfiguration, CurrencyInformationRetriever currencyInformationRetriever) {
+    public MiningConfiguration calculateOptimalConfig(ConfigRequestProperties clientConfiguration, ClientDashBoardConfiguration clientDashBoardConfiguration, CurrencyInformationRetriever currencyInformationRetriever) {
         MiningConfiguration miningConfig = new MiningConfiguration();
 
         List<CurrenciesShortName> currencies = currencyInformationRetriever.getOrderedListRecommendedMining();

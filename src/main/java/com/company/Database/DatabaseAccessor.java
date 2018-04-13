@@ -46,18 +46,19 @@ public class DatabaseAccessor {
         executeRequest(sql, UPDATE, null);
     }
 
-    public String getWorkerConfigFieldString(String field, String workerName) {
+    public String getWorkerConfigFieldString(String workerName, String field) {
         logger.info("Getting config field: " + field);
         String sql = "SELECT * " +
-                "FROM workers_configurations " +
-                "JOIN workers ON workers.id=workers_configurations.worker_id " +
-                "JOIN mined_cryptocurrencies ON workers_configurations.id=mined_cryptocurrencies.configuration_id " +
-                "WHERE worker_name=\'" + workerName + "\'";
+                "FROM users " +
+                "JOIN workers ON users.id=workers.user_id " +
+                "JOIN workers_configuration ON workers.id=workers_configuration.worker_id " +
+                "JOIN mined_cryptocurrencies ON workers_configuration.id=mined_cryptocurrencies.worker_configuration_id " +
+                "WHERE workers.worker_name=\'" + workerName + "\' AND users.email=\'" + userEmail + "\'";
         return executeRequest(sql, QUERY, field);
     }
 
-    public Boolean getWorkerConfigFieldBoolean(String field, String workerName) {
-        String booleanField = getWorkerConfigFieldString(field, workerName);
+    public Boolean getWorkerConfigFieldBoolean(String workerName, String field) {
+        String booleanField = getWorkerConfigFieldString(workerName, field);
         if(booleanField != null) {
             return booleanField.equals("t");
         }
