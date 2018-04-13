@@ -29,13 +29,13 @@ public class DatabaseAccessor {
         }
     }
 
-    public void cleanWorkerTable() {
+    public void reactualiseWorkerTable() {
         logger.info("Cleaning workers table");
-        String sql = "DELETE FROM workers WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + WORKER_TABLE_DATA_TIMEOUT +  " milliseconds');";
+        String sql = "UPDATE workers SET hashrate=0.0 WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + WORKER_TABLE_DATA_TIMEOUT +  " milliseconds');";
         executeRequest(sql, UPDATE, null);
     }
 
-    public void updateWorkerTable(String workerName, String currency, Float hashrate) {
+    public void insertWorkerTable(String workerName, String currency, Float hashrate) {
         logger.info("Updating worker table with: " + workerName + ", " + currency + ", " + hashrate);
         String sql = "INSERT INTO workers (user_id, worker_name, mined_currency, hashrate, timestamp) " +
                 "VALUES ((SELECT id FROM users WHERE email='" + userEmail + "'), '" + workerName + "', '" + currency + "', " + hashrate + ", CURRENT_TIMESTAMP) " +

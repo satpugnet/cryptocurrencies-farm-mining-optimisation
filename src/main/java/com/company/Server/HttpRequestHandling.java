@@ -79,7 +79,7 @@ public class HttpRequestHandling {
             Gson g = new Gson();
             MiningDiagnosisProperties properties = g.fromJson(requestBody, MiningDiagnosisProperties.class);
             DatabaseAccessor db = new DatabaseAccessor(properties.getUserEmail());
-            db.updateWorkerTable(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
+            db.insertWorkerTable(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
             t.sendResponseHeaders(200, 0);
             t.getResponseBody().close();
             logger.info("Mining diagnosis request completed");
