@@ -26,7 +26,7 @@ public class URLConnection {
                 result.append(line);
             }
             rd.close();
-            logger.info("Sending a get request for the following url " + urlToRead + " with a response of " + result);
+            logger.trace("Sending a get request for the following url " + urlToRead + " with a response of " + result);
             return result.toString();
         } catch (Exception e) {
             e.printStackTrace();
