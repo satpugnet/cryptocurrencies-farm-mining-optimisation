@@ -18,6 +18,7 @@ public class DatabaseAccessor {
     private String userEmail;
     private static Connection conn;
 
+    // TODO: refactor (use of email in constructor might not be best structure)
     public DatabaseAccessor(String userEmail) {
         this.userEmail = userEmail;
         try {
@@ -45,18 +46,18 @@ public class DatabaseAccessor {
         executeRequest(sql, UPDATE, null);
     }
 
-    public String getConfigFieldString(String field) {
+    public String getWorkerConfigFieldString(String field, String workerName) {
         logger.info("Getting config field: " + field);
         String sql = "SELECT * " +
                 "FROM workers_configurations " +
-                "JOIN users ON users.id=workers_configurations.user_id " +
+                "JOIN workers ON workers.id=workers_configurations.worker_id " +
                 "JOIN mined_cryptocurrencies ON workers_configurations.id=mined_cryptocurrencies.configuration_id " +
-                "WHERE email=\'" + userEmail + "\'";
+                "WHERE worker_name=\'" + workerName + "\'";
         return executeRequest(sql, QUERY, field);
     }
 
-    public Boolean getConfigFieldBoolean(String field) {
-        String booleanField = getConfigFieldString(field);
+    public Boolean getWorkerConfigFieldBoolean(String field, String workerName) {
+        String booleanField = getWorkerConfigFieldString(field, workerName);
         if(booleanField != null) {
             return booleanField.equals("t");
         }

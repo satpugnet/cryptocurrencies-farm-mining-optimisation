@@ -15,9 +15,9 @@ public class ClientDashBoardConfiguration {
 
     public ClientDashBoardConfiguration(String userEmail) {
         DatabaseAccessor databaseAccessor = new DatabaseAccessor(userEmail);
-        activateMining = convertActivateMiningValue(databaseAccessor.getConfigFieldString("activate_mining"));
+        activateMining = convertActivateMiningValue(databaseAccessor.getWorkerConfigFieldString("activate_mining"));
         for(CurrenciesShortName currency : CurrenciesShortName.values()) {
-            Boolean isMinedCurrency = databaseAccessor.getConfigFieldBoolean(currency.toString());
+            Boolean isMinedCurrency = databaseAccessor.getWorkerConfigFieldBoolean(currency.toString());
             if(isMinedCurrency != null) {
                 minedCryptocurrencies.put(currency, isMinedCurrency);
             }
