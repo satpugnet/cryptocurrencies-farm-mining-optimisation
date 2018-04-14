@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
-import static com.company.Server.AccessSecurity.AuthorisedRequests.OptimalCryptoMining;
 
 // TODO: look at jetty and use itpor
 public class HttpRequestHandling {
@@ -54,7 +53,7 @@ public class HttpRequestHandling {
             rb.close();
             Gson g = new Gson();
             ConfigRequestProperties properties = g.fromJson(requestBody, ConfigRequestProperties.class);
-            if (!RequestAuthorisation.hasAuthorisedId(properties.getUserEmail(), OptimalCryptoMining)) {
+            if (!RequestAuthorisation.hasAuthorisedId(properties.getUserEmail())) {
                 t.sendResponseHeaders(404, 0);
                 t.getResponseBody().close();
                 logger.warn("Unauthorised request received");
