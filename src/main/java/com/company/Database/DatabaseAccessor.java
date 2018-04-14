@@ -37,7 +37,7 @@ public class DatabaseAccessor {
         // TODO: clean the workers_configuration as well
     }
 
-    public void insertWorkerTable(String workerName, String currency, Float hashrate) {
+    public void updateOrInsertWorker(String workerName, String currency, Float hashrate) {
         logger.info("Updating worker table with: " + workerName + ", " + currency + ", " + hashrate);
         // Create or update worker
         String sql = "INSERT INTO workers (user_id, worker_name, mined_currency, hashrate, timestamp) " +
@@ -48,11 +48,18 @@ public class DatabaseAccessor {
                 "RETURNING workers.id";
         String worker_id = executeRequest(sql, QUERY, "id");
         // TODO: find a better way to initialise (no need to redo on every hashrate update) (make the client send on request when booting to create the record in the db same for workers
+        logger.info("Inserting into workers_configuration");
         // Create workers_configuration if non-existing
         String sql2 = "INSERT INTO workers_configuration (worker_id,activate_mining) " +
                 "VALUES (" + worker_id + ", true) " +
+                "ON CONFLICT (worker_id) DO UPDATE SET worker_id=excluded.worker_id " +
+                "RETURNING workers_configuration.id";
+        String worker_configuration_id = executeRequest(sql2, QUERY, "id");
+        logger.info("Inserting into mined_cryptocurrencies");
+        String sql3 = "INSERT INTO mined_cryptocurrencies (worker_configuration_id) " +
+                "VALUES (" + worker_configuration_id + ") " +
                 "ON CONFLICT DO NOTHING";
-        executeRequest(sql2, UPDATE, null);
+        executeRequest(sql3, UPDATE, null);
     }
 
     public String getWorkerConfigFieldString(String workerName, String field) {

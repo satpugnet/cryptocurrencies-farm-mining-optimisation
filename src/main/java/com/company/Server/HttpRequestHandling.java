@@ -25,7 +25,7 @@ import static com.company.Server.AccessSecurity.AuthorisedRequests.OptimalCrypto
 // TODO: look at jetty and use itpor
 public class HttpRequestHandling {
 
-    private final static Logger logger = Logger.getLogger(CoinWarzCurrencyInformationRetriever.class);
+    private final static Logger logger = Logger.getLogger(HttpRequestHandling.class);
 
     //TODO clean this function
     public static void startServer(int portNumber) throws IOException {
@@ -79,7 +79,7 @@ public class HttpRequestHandling {
             Gson g = new Gson();
             MiningDiagnosisProperties properties = g.fromJson(requestBody, MiningDiagnosisProperties.class);
             DatabaseAccessor db = new DatabaseAccessor(properties.getUserEmail());
-            db.insertWorkerTable(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
+            db.updateOrInsertWorker(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
             t.sendResponseHeaders(200, 0);
             t.getResponseBody().close();
             logger.info("Mining diagnosis request completed");
