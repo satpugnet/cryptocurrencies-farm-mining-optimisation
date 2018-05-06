@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.RecurrentJobs.ExchangesFundConversion;
 import com.company.RecurrentJobs.WorkersTableCleaning;
 import com.company.Server.HttpRequestHandling;
 import org.apache.log4j.Logger;
@@ -7,6 +8,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Timer;
 
+import static com.company.Variables.FUND_CONVERSION_RATE;
 import static com.company.Variables.WORKER_TABLE_DATA_TIMEOUT;
 
 // TODO: learn about Spring and add to the app
@@ -35,7 +37,11 @@ public class Main {
 
     private static void ScheduleRecurrentJobs() {
         WorkersTableCleaning workersTableCleaning = new WorkersTableCleaning();
-        Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(workersTableCleaning,0 , WORKER_TABLE_DATA_TIMEOUT / 2);
+        Timer timer1 = new Timer(true);
+        timer1.scheduleAtFixedRate(workersTableCleaning,0 , WORKER_TABLE_DATA_TIMEOUT / 2);
+
+        ExchangesFundConversion exchangesFundConversion = new ExchangesFundConversion();
+        Timer timer2 = new Timer(true);
+        timer2.scheduleAtFixedRate(exchangesFundConversion,0 , FUND_CONVERSION_RATE);
     }
 }

@@ -14,6 +14,6 @@ public class WorkersTableCleaning extends TimerTask {
         logger.info("Starting workers table cleaning");
         DatabaseAccessor db = new DatabaseAccessor(null);
         db.reactualiseWorkerTable();
-        logger.info("Finish cleaning workers table");
+        logger.info("Finished cleaning workers table");
     }
 }

@@ -8,6 +8,29 @@
     <artifactId>cryptocurrencies-farm-mining-optimisation</artifactId>
     <version>1.0</version>
 
+    <repositories>
+        <repository>
+            <id>spring-repo</id>
+            <name>Spring Repository</name>
+            <url>http://repo.spring.io/plugins-release/</url>
+        </repository>
+        <repository>
+            <id>spring-lib</id>
+            <name>Spring Lib Repository</name>
+            <url>http://repo.spring.io/libs-milestone/</url>
+        </repository>
+        <repository>
+            <id>ethereum</id>
+            <name>Ethereum Repository</name>
+            <url>https://dl.bintray.com/ethereum/maven/</url>
+        </repository>
+        <repository>
+            <id>redhat</id>
+            <name>Redhat Repository</name>
+            <url>https://maven.repository.redhat.com/ga/</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -80,6 +103,16 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.4-1201-jdbc4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.madgag.spongycastle</groupId>
+            <artifactId>core</artifactId>
+            <version>1.58.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
     </dependencies>
 
