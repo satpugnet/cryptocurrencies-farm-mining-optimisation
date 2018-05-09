@@ -4,12 +4,12 @@ import com.company.Server.JsonFormat.ConfigRequest.SystemConfig.GPU.GraphicCard;
 import com.company.crypto_currencies.CurrencyShortName;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.company.Database.QueryType.QUERY;
 import static com.company.Database.QueryType.UPDATE;
@@ -37,26 +37,28 @@ public class DatabaseAccessor {
         }
     }
 
-    public List<CurrencyShortName> getOrderedListCurrencyToMine(GraphicCard graphicCard) {
+    public List<GraphicCardLiveData> getOrderedListCurrencyToMine(GraphicCard graphicCard) {
         logger.info("Getting ordered list of currencies to mine for graphic card: " + graphicCard);
         String sql = "SELECT * " +
                 "FROM \"" + graphicCard + "_live_data\" " +
                 "ORDER BY ranking";
         ResultSet graphicCardLiveData = executeRequest(sql, QUERY);
-        List<String> result = new LinkedList<>();
+
+        List<GraphicCardLiveData> result = new LinkedList<>();
         try {
-            result = convertResultSetColumnToList(graphicCardLiveData, "currency");
+            while(graphicCardLiveData.next()) {
+                CurrencyShortName currency = CurrencyShortName.valueOf(graphicCardLiveData.getString("currency"));
+                BigDecimal profit_per_second = new BigDecimal(graphicCardLiveData.getString("profit_per_second"));
+                result.add(GraphicCardLiveData.builder().currencyShortName(currency).profitPerSecond(profit_per_second).build());
+            }
         } catch (SQLException e) {
             logger.warn("SQL exception while getting ordered list of currencies (" + sql + "): " + e);
-        }
-        closeStatementAndResultSet();
-
-        try {
-            return result.stream().map(CurrencyShortName::valueOf).collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        return null;
+        closeStatementAndResultSet();
+
+        return result;
     }
 
     public void reactualiseWorkerTable() {
@@ -176,14 +178,5 @@ public class DatabaseAccessor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private List<String> convertResultSetColumnToList(ResultSet rs, String columnName) throws SQLException {
-        List<String> result = new LinkedList<>();
-        while(rs.next()) {
-            result.add(rs.getString(columnName));
-        }
-        rs.beforeFirst();
-        return result;
     }
 }
