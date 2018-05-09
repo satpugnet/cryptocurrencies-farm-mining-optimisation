@@ -1,7 +1,7 @@
 package com.company.crypto_currencies.currencies_retrieval;
 
 import com.company.Utils.URLConnection;
-import com.company.crypto_currencies.CurrenciesShortName;
+import com.company.crypto_currencies.CurrencyShortName;
 import lombok.SneakyThrows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.company.crypto_currencies.CurrenciesShortName.BTC;
+import static com.company.crypto_currencies.CurrencyShortName.BTC;
 
 // TODO: process JSON with a framework
 // TODO: remove duplication with whattomine.com
@@ -34,7 +34,7 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
     }
 
     @Override
-    public double getLiveExchange(CurrenciesShortName currencyComparedFrom) {
+    public double getLiveExchange(CurrencyShortName currencyComparedFrom) {
         double exchangeRate = findInformationInData(currencyComparedFrom.toString(), "ExchangeRate");
         if(currencyComparedFrom != BTC) {
             exchangeRate *= findInformationInData(BTC.toString(), "ExchangeRate");
@@ -44,14 +44,14 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
     }
 
     @Override
-    public double getDifficulty(CurrenciesShortName currentCurrencyShortNames) {
+    public double getDifficulty(CurrencyShortName currentCurrencyShortNames) {
         double difficulty = findInformationInData(currentCurrencyShortNames.toString(), "Difficulty");
         logger.info("CoinWarz, Getting a difficulty for " + currentCurrencyShortNames + " of " + difficulty);
         return difficulty;
     }
 
     @Override
-    public double getBlockReward(CurrenciesShortName currentCurrencyShortNames) {
+    public double getBlockReward(CurrencyShortName currentCurrencyShortNames) {
         double blockReward = findInformationInData(currentCurrencyShortNames.toString(), "Difficulty");
         logger.info("CoinWarz, Getting a blockReward for " + currentCurrencyShortNames + " of " + blockReward);
         return blockReward;
@@ -65,20 +65,20 @@ public class CoinWarzCurrencyInformationRetriever implements CurrencyInformation
 
     @Override
     @SneakyThrows
-    public List<CurrenciesShortName> getOrderedListRecommendedMining() {
+    public List<CurrencyShortName> getOrderedListRecommendedMining() {
         logger.info("CoinWarz, Getting an ordered list of recommended mining cryptocurrencies");
-        List<CurrenciesShortName> currencies = new LinkedList<>();
+        List<CurrencyShortName> currencies = new LinkedList<>();
         JSONObject response = getProfitabilityData();
         JSONArray allCoinData = response.getJSONArray("Data");
         for (int i = 0; i < allCoinData.length(); i++) {
             JSONObject currentCoin = allCoinData.getJSONObject(i);
-            CurrenciesShortName currenciesShortName;
+            CurrencyShortName currencyShortName;
             try {
-                currenciesShortName = CurrenciesShortName.valueOf(currentCoin.getString("CoinTag"));
+                currencyShortName = CurrencyShortName.valueOf(currentCoin.getString("CoinTag"));
             } catch (Exception e) {
                 continue;
             }
-            currencies.add(currenciesShortName);
+            currencies.add(currencyShortName);
         }
         logger.info("CoinWarz, Completed the getting of an ordered list of recommended mining cryptocurrencies: " + currencies);
         return currencies;

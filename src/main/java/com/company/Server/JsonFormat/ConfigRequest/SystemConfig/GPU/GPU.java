@@ -6,4 +6,5 @@ import lombok.Data;
 public class GPU {
     private GPUType gpuType;
     private Long memorySize;
+    private GraphicCard graphicCard;
 }

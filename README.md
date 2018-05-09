@@ -5,8 +5,8 @@ curl -v --request POST 'https://crypto-mining-optimisation.herokuapp.com/' --dat
 curl -v --request POST 'http://localhost:8000/' --data '{"userEmail":"saturnin.13@hotmail.fr", workerName='worker1', "data":{"sysconfig":{"OS":"linux"}, "benchMarking":[]}}'
 
 ## Windows
-Invoke-WebRequest 'https://crypto-mining-optimisation.herokuapp.com/' -Method 'POST' -Body "{userEmail:'saturnin.13@hotmail.fr', workerName='worker1',data:{sysconfig:{OS:'linux'},benchMarking:[]}}"
-Invoke-WebRequest 'http://localhost:8000/' -Method 'POST' -Body "{userEmail:'saturnin.13@hotmail.fr', workerName='worker1',data:{sysconfig:{OS:'linux'},benchMarking:[]}}"
+Invoke-WebRequest 'https://crypto-mining-optimisation.herokuapp.com/' -Method 'POST' -Body '{"userEmail":"saturnin.13@hotmail.fr", "workerName": "pcsaturnin", "data":{"systemConfig":{"os":{"osType":"windows","dataModel":"x64","version":"6.3","environment":"POWERSHELL"},"gpus":{"gpus":[{"gpuType":"openCl","memorySize":2214592512},{"gpuType":"cuda","memorySize":2147483648}]}}, "benchMarking":[]}}'
+Invoke-WebRequest 'http://localhost:8000/' -Method 'POST' -Body '{"userEmail":"saturnin.13@hotmail.fr", "workerName": "pcsaturnin", "data":{"systemConfig":{"os":{"osType":"windows","dataModel":"x64","version":"6.3","environment":"POWERSHELL"},"gpus":{"gpus":[{"gpuType":"openCl","memorySize":2214592512},{"gpuType":"cuda","memorySize":2147483648}]}}, "benchMarking":[]}}'
 
 Invoke-WebRequest 'https://crypto-mining-optimisation.herokuapp.com/' -Method 'PUT' -Body "{userEmail:'saturnin.13@hotmail.fr',workerName:'workerPCsaturnin', currency:'BTC',hashrate:25.3}"
 Invoke-WebRequest 'http://localhost:8000/' -Method 'PUT' -Body "{userEmail:'saturnin.13@hotmail.fr',workerName:'workerPCsaturnin', currency:'BTC',hashrate:25.3}"

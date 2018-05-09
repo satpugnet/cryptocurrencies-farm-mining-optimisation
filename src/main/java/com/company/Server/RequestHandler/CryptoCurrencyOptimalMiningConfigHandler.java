@@ -9,7 +9,7 @@ import com.company.crypto_currencies.currencies_retrieval.WhatToMineCurrencyInfo
 
 public class CryptoCurrencyOptimalMiningConfigHandler implements Handler {
 
-    //TODO: implement this
+    // TODO: implement this
     @Override
     public MiningConfiguration handle(ConfigRequestProperties clientConfig) {
         // TODO: add dashboard interface (electricity cost and consumption)
@@ -17,6 +17,6 @@ public class CryptoCurrencyOptimalMiningConfigHandler implements Handler {
         OptimalMiningConfigCalculation optimalMiningConfigCalculation = new OptimalMiningConfigCalculation();
         CurrencyInformationRetriever coinWarzCurrencyInformationRetriever = new WhatToMineCurrencyInformationRetriever();
 
-        return optimalMiningConfigCalculation.calculateOptimalConfig(clientConfig, clientDashBoardConfiguration,coinWarzCurrencyInformationRetriever);
+        return optimalMiningConfigCalculation.calculateOptimalConfig(clientConfig, clientDashBoardConfiguration, coinWarzCurrencyInformationRetriever);
     }
 }

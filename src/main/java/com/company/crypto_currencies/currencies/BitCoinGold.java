@@ -3,7 +3,7 @@ package com.company.crypto_currencies.currencies;
 import com.company.crypto_currencies.CryptoCurrencies;
 import com.company.crypto_currencies.currencies_retrieval.CurrencyInformationRetriever;
 
-import static com.company.crypto_currencies.CurrenciesShortName.BTG;
+import static com.company.crypto_currencies.CurrencyShortName.BTG;
 
 public class BitCoinGold extends CryptoCurrencies {
 

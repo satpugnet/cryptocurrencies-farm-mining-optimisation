@@ -1,10 +1,15 @@
 package com.company.Database;
 
+import com.company.Server.JsonFormat.ConfigRequest.SystemConfig.GPU.GraphicCard;
+import com.company.crypto_currencies.CurrencyShortName;
 import org.apache.log4j.Logger;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.company.Database.QueryType.QUERY;
 import static com.company.Database.QueryType.UPDATE;
@@ -17,6 +22,8 @@ public class DatabaseAccessor {
 
     private String userEmail;
     private static Connection conn;
+    private Statement stmt = null;
+    private ResultSet rs = null;
 
     // TODO: refactor (use of email in constructor might not be best structure)
     public DatabaseAccessor(String userEmail) {
@@ -30,10 +37,32 @@ public class DatabaseAccessor {
         }
     }
 
+    public List<CurrencyShortName> getOrderedListCurrencyToMine(GraphicCard graphicCard) {
+        logger.info("Getting ordered list of currencies to mine for graphic card: " + graphicCard);
+        String sql = "SELECT * " +
+                "FROM \"" + graphicCard + "_live_data\" " +
+                "ORDER BY ranking";
+        ResultSet graphicCardLiveData = executeRequest(sql, QUERY);
+        List<String> result = new LinkedList<>();
+        try {
+            result = convertResultSetColumnToList(graphicCardLiveData, "currency");
+        } catch (SQLException e) {
+            logger.warn("SQL exception while getting ordered list of currencies (" + sql + "): " + e);
+        }
+        closeStatementAndResultSet();
+
+        try {
+            return result.stream().map(CurrencyShortName::valueOf).collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void reactualiseWorkerTable() {
         logger.info("Cleaning workers table");
         String sql = "UPDATE workers SET hashrate=0.0 WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + WORKER_TABLE_DATA_TIMEOUT +  " milliseconds');";
-        executeRequest(sql, UPDATE, null);
+        executeRequest(sql, UPDATE);
         // TODO: clean the workers_configuration as well
     }
 
@@ -46,20 +75,36 @@ public class DatabaseAccessor {
                 "DO UPDATE SET user_id=(SELECT id FROM users WHERE email='" + userEmail + "'), " +
                 "    worker_name='" + workerName + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP " +
                 "RETURNING workers.id";
-        String worker_id = executeRequest(sql, QUERY, "id");
+        ResultSet responseWorkerTable = executeRequest(sql, QUERY);
+        String worker_id = null;
+        try {
+            worker_id = responseWorkerTable.getString("id");
+        } catch (SQLException e) {
+            logger.warn("SQL exception while inserting worker configurations (" + sql + "): " + e);
+        }
+        closeStatementAndResultSet();
         // TODO: find a better way to initialise (no need to redo on every hashrate update) (make the client send on request when booting to create the record in the db same for workers
+
         logger.info("Inserting into workers_configuration");
         // Create workers_configuration if non-existing
         String sql2 = "INSERT INTO workers_configuration (worker_id,activate_mining) " +
                 "VALUES (" + worker_id + ", true) " +
                 "ON CONFLICT (worker_id) DO UPDATE SET worker_id=excluded.worker_id " +
                 "RETURNING workers_configuration.id";
-        String worker_configuration_id = executeRequest(sql2, QUERY, "id");
+        ResultSet responseWorkerConfiguration = executeRequest(sql2, QUERY);
+        String worker_configuration_id = null;
+        try {
+            worker_configuration_id = responseWorkerConfiguration.getString("id");
+        } catch (SQLException e) {
+            logger.warn("SQL exception while getting the worker configurations (" + sql + "): " + e);
+        }
+        closeStatementAndResultSet();
+
         logger.info("Inserting into mined_cryptocurrencies");
         String sql3 = "INSERT INTO mined_cryptocurrencies (worker_configuration_id) " +
                 "VALUES (" + worker_configuration_id + ") " +
                 "ON CONFLICT DO NOTHING";
-        executeRequest(sql3, UPDATE, null);
+        executeRequest(sql3, UPDATE);
     }
 
     public String getWorkerConfigFieldString(String workerName, String field) {
@@ -70,7 +115,14 @@ public class DatabaseAccessor {
                 "JOIN workers_configuration ON workers.id=workers_configuration.worker_id " +
                 "JOIN mined_cryptocurrencies ON workers_configuration.id=mined_cryptocurrencies.worker_configuration_id " +
                 "WHERE workers.worker_name=\'" + workerName + "\' AND users.email=\'" + userEmail + "\'";
-        return executeRequest(sql, QUERY, field);
+        ResultSet response = executeRequest(sql, QUERY);
+        try {
+            return response.getString(field);
+        } catch (SQLException e) {
+            logger.warn("SQL exception while getting the worker config fields " + field + "(" + sql + "): " + e);
+        }
+        closeStatementAndResultSet();
+        return null;
     }
 
     public Boolean getWorkerConfigFieldBoolean(String workerName, String field) {
@@ -81,34 +133,26 @@ public class DatabaseAccessor {
         return false;
     }
 
-    private String executeRequest(String sql, QueryType requestType, String field) {
+    private ResultSet executeRequest(String sql, QueryType requestType) {
 
-        Statement stmt = null;
-        ResultSet rs = null;
-        String result = "";
+        stmt = null;
+        rs = null;
 
         try {
-            stmt = conn.createStatement();
+            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
             if(requestType == QUERY) {
                 rs = stmt.executeQuery(sql);
                 rs.next();
-                result = rs.getString(field);
             } else if(requestType == UPDATE) {
                 stmt.executeUpdate(sql);
             }
 
         } catch (SQLException e) {
             logger.warn("SQL exception for request " + sql + " in the database request: \n" + e);
-        } finally {
-            try {
-                if (rs != null) { rs.close(); }
-                if (stmt != null) { stmt.close(); }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-        return result;
+
+        return rs;
     }
 
     private Connection getConnection() throws URISyntaxException, SQLException {
@@ -123,5 +167,23 @@ public class DatabaseAccessor {
         String dbUrlExtended = dbUrl + "?sslmode=require&user=" + username + "&password=" + password;
 
         return DriverManager.getConnection(dbUrlExtended);
+    }
+
+    private void closeStatementAndResultSet() {
+        try {
+            if (rs != null) { rs.close(); }
+            if (stmt != null) { stmt.close(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<String> convertResultSetColumnToList(ResultSet rs, String columnName) throws SQLException {
+        List<String> result = new LinkedList<>();
+        while(rs.next()) {
+            result.add(rs.getString(columnName));
+        }
+        rs.beforeFirst();
+        return result;
     }
 }

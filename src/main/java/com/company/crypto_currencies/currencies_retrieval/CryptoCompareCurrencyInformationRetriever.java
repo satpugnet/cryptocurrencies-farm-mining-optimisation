@@ -1,13 +1,13 @@
 package com.company.crypto_currencies.currencies_retrieval;
 
-import com.company.crypto_currencies.CurrenciesShortName;
+import com.company.crypto_currencies.CurrencyShortName;
 
 import java.util.List;
 
 public class CryptoCompareCurrencyInformationRetriever implements CurrencyInformationRetriever {
 
     @Override
-    public double getLiveExchange(CurrenciesShortName currencyComparedFrom) {
+    public double getLiveExchange(CurrencyShortName currencyComparedFrom) {
 //        System.out.println(URLConnection.getRequest("https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=" + currencyComparedFrom));
         return -1;
     }
@@ -18,17 +18,17 @@ public class CryptoCompareCurrencyInformationRetriever implements CurrencyInform
     }
 
     @Override
-    public double getDifficulty(CurrenciesShortName currentCurrencyShortNames) {
+    public double getDifficulty(CurrencyShortName currentCurrencyShortNames) {
         return 0;
     }
 
     @Override
-    public double getBlockReward(CurrenciesShortName currentCurrencyShortNames) {
+    public double getBlockReward(CurrencyShortName currentCurrencyShortNames) {
         return 0;
     }
 
     @Override
-    public List<CurrenciesShortName> getOrderedListRecommendedMining() {
+    public List<CurrencyShortName> getOrderedListRecommendedMining() {
         return null;
     }
 }

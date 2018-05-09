@@ -40,7 +40,6 @@ public class BinanceApiInterface implements Exchange {
         binanceAccountData.setBalances(binanceAccountData.getBalances().stream()
                 .filter(asset -> asset.getFree().compareTo(BigDecimal.ZERO) != 0 || asset.getLocked().compareTo(BigDecimal.ZERO) != 0)
                 .collect(Collectors.toList()));
-        System.out.println(binanceAccountData);
 
         String resultExchange = executeRequest("https://www.binance.com/api/v1/exchangeInfo", "GET", apikeyheader);
         BinanceExchangeData binanceExchangeData = g.fromJson(resultExchange, BinanceExchangeData.class);

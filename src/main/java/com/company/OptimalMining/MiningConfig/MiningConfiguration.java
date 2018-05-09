@@ -1,7 +1,7 @@
 package com.company.OptimalMining.MiningConfig;
 
 import com.company.OptimalMining.Configuration;
-import com.company.crypto_currencies.CurrenciesShortName;
+import com.company.crypto_currencies.CurrencyShortName;
 import lombok.Data;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class MiningConfiguration implements Configuration {
 
     Boolean activateMining;
-    List<CurrenciesShortName> currenciesToMine;
+    List<CurrencyShortName> currenciesToMine;
 
     public MiningConfiguration() {
         activateMining = true;
@@ -33,7 +33,7 @@ public class MiningConfiguration implements Configuration {
         return finalObject;
     }
 
-    private List<String> toStringList(List<CurrenciesShortName> originalList) {
+    private List<String> toStringList(List<CurrencyShortName> originalList) {
         return originalList.stream().map(Enum::toString).collect(Collectors.toList());
     }
 }

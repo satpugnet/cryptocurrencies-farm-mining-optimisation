@@ -1,7 +1,7 @@
 package com.company.OptimalMining.ClientDashBoard;
 
 import com.company.Database.DatabaseAccessor;
-import com.company.crypto_currencies.CurrenciesShortName;
+import com.company.crypto_currencies.CurrencyShortName;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -11,12 +11,12 @@ import java.util.Map;
 public class ClientDashBoardConfiguration {
 
     private boolean activateMining;
-    Map<CurrenciesShortName, Boolean> minedCryptocurrencies = new HashMap<>();
+    Map<CurrencyShortName, Boolean> minedCryptocurrencies = new HashMap<>();
 
     public ClientDashBoardConfiguration(String userEmail, String workerName) {
         DatabaseAccessor databaseAccessor = new DatabaseAccessor(userEmail);
         activateMining = convertActivateMiningValue(databaseAccessor.getWorkerConfigFieldString(workerName, "activate_mining"));
-        for(CurrenciesShortName currency : CurrenciesShortName.values()) {
+        for(CurrencyShortName currency : CurrencyShortName.values()) {
             Boolean isMinedCurrency = databaseAccessor.getWorkerConfigFieldBoolean(workerName, currency.toString());
             if(isMinedCurrency != null) {
                 minedCryptocurrencies.put(currency, isMinedCurrency);
