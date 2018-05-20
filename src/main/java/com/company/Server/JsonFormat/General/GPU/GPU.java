@@ -8,4 +8,5 @@ public class GPU {
     private long memorySize;
     private GraphicCard graphicCard;
     private int id;
+    private int cudaId;
 }
