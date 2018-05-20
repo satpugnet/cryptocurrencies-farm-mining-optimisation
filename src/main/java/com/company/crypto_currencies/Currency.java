@@ -1,10 +1,11 @@
 package com.company.crypto_currencies;
 
+import com.company.Server.JsonFormat.General.MinedCurrencyShortName;
 import com.company.crypto_currencies.currencies_retrieval.CurrencyInformationRetriever;
 
 public abstract class Currency {
 
-    protected CurrencyShortName currentCurrencyShortNames;
+    protected MinedCurrencyShortName currentMinedCurrencyShortNames;
     protected CurrencyInformationRetriever currencyInformationRetriever;
 
     public Currency(CurrencyInformationRetriever currencyInformationRetriever) {
@@ -12,6 +13,6 @@ public abstract class Currency {
     }
 
     public double getLiveValue() {
-        return currencyInformationRetriever.getLiveExchange(currentCurrencyShortNames);
+        return currencyInformationRetriever.getLiveExchange(currentMinedCurrencyShortNames);
     }
 }

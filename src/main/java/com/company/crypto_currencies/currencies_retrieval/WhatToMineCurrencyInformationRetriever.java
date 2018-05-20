@@ -1,7 +1,7 @@
 package com.company.crypto_currencies.currencies_retrieval;
 
+import com.company.Server.JsonFormat.General.MinedCurrencyShortName;
 import com.company.Utils.URLConnection;
-import com.company.crypto_currencies.CurrencyShortName;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.company.crypto_currencies.CurrencyShortName.BTC;
+import static com.company.Server.JsonFormat.General.MinedCurrencyShortName.BTC;
 
 public class WhatToMineCurrencyInformationRetriever implements CurrencyInformationRetriever {
 
@@ -17,7 +17,7 @@ public class WhatToMineCurrencyInformationRetriever implements CurrencyInformati
 
 
     @Override
-    public double getLiveExchange(CurrencyShortName currencyComparedFrom) {
+    public double getLiveExchange(MinedCurrencyShortName currencyComparedFrom) {
         double exchangeRate = findInformationInData(currencyComparedFrom, "exchange_rate");
         if(currencyComparedFrom != BTC) {
             exchangeRate *= getLiveExchange(BTC);
@@ -33,42 +33,42 @@ public class WhatToMineCurrencyInformationRetriever implements CurrencyInformati
     }
 
     @Override
-    public double getDifficulty(CurrencyShortName currentCurrencyShortNames) {
-        double difficulty = findInformationInData(currentCurrencyShortNames, "difficulty");
-        logger.info("WhatToMine, Getting a difficulty for " + currentCurrencyShortNames + " of " + difficulty);
+    public double getDifficulty(MinedCurrencyShortName currentMinedCurrencyShortNames) {
+        double difficulty = findInformationInData(currentMinedCurrencyShortNames, "difficulty");
+        logger.info("WhatToMine, Getting a difficulty for " + currentMinedCurrencyShortNames + " of " + difficulty);
         return difficulty;
     }
 
     @Override
-    public double getBlockReward(CurrencyShortName currentCurrencyShortNames) {
-        double blockReward = findInformationInData(currentCurrencyShortNames, "block_reward");
-        logger.info("WhatToMine, Getting block reward for " + currentCurrencyShortNames + " of " + blockReward);
+    public double getBlockReward(MinedCurrencyShortName currentMinedCurrencyShortNames) {
+        double blockReward = findInformationInData(currentMinedCurrencyShortNames, "block_reward");
+        logger.info("WhatToMine, Getting block reward for " + currentMinedCurrencyShortNames + " of " + blockReward);
         return blockReward;
     }
 
     @Override
-    public List<CurrencyShortName> getOrderedListRecommendedMining() {
+    public List<MinedCurrencyShortName> getOrderedListRecommendedMining() {
         logger.info("WhatToMine, Getting an ordered list of recommended mining cryptocurrencies");
-        List<CurrencyShortName> currencies = new LinkedList<>();
+        List<MinedCurrencyShortName> currencies = new LinkedList<>();
         String allCoinData = URLConnection.getRequest("http://WhatToMine.com/coins.json");
         int currentIndex;
 
         while((currentIndex = allCoinData.indexOf("tag")) != -1) {
             allCoinData = allCoinData.substring(currentIndex + 6);
             String shortName = allCoinData.substring(0, allCoinData.indexOf("\""));
-            CurrencyShortName currencyShortName;
+            MinedCurrencyShortName minedCurrencyShortName;
             try {
-                currencyShortName = CurrencyShortName.valueOf(shortName);
+                minedCurrencyShortName = MinedCurrencyShortName.valueOf(shortName);
             } catch (Exception e) {
                 continue;
             }
-            currencies.add(currencyShortName);
+            currencies.add(minedCurrencyShortName);
         }
         logger.info("WhatToMine, Completed the getting of an ordered list of recommended mining cryptocurrencies: " + currencies);
         return currencies;
     }
 
-    private double findInformationInData(CurrencyShortName currencyComparedFrom, String informationToFind) {
+    private double findInformationInData(MinedCurrencyShortName currencyComparedFrom, String informationToFind) {
         JSONObject json = getCoinJson(currencyComparedFrom);
         try {
             return json.getDouble(informationToFind);
@@ -78,7 +78,7 @@ public class WhatToMineCurrencyInformationRetriever implements CurrencyInformati
         return -1;
     }
 
-    private JSONObject getCoinJson(CurrencyShortName currencyComparedFrom) {
+    private JSONObject getCoinJson(MinedCurrencyShortName currencyComparedFrom) {
         int coinvalue = convertNameToValue(currencyComparedFrom);
         String jsonReply = URLConnection.getRequest("http://WhatToMine.com/coins/" + coinvalue + ".json");
         JSONObject json = null;
@@ -90,7 +90,7 @@ public class WhatToMineCurrencyInformationRetriever implements CurrencyInformati
         return json;
     }
 
-    private int convertNameToValue(CurrencyShortName currencyComparedFrom) {
+    private int convertNameToValue(MinedCurrencyShortName currencyComparedFrom) {
         switch (currencyComparedFrom) {
             case ETH: return 151;
             case BTC: return 1;

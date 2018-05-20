@@ -13,7 +13,7 @@ public class WorkersTableCleaning extends TimerTask {
     public void run() {
         logger.info("Starting workers table cleaning");
         DatabaseAccessor db = new DatabaseAccessor(null);
-        db.reactualiseWorkerTable();
+        db.reactualiseGraphicCardTable();
         logger.info("Finished cleaning workers table");
     }
 }

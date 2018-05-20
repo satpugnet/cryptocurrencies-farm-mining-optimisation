@@ -1,10 +1,11 @@
-package com.company.Server.JsonFormat.ConfigRequest.SystemConfig.GPU;
+package com.company.Server.JsonFormat.General.GPU;
 
 import lombok.Data;
 
 @Data
 public class GPU {
     private GPUType gpuType;
-    private Long memorySize;
+    private long memorySize;
     private GraphicCard graphicCard;
+    private int id;
 }

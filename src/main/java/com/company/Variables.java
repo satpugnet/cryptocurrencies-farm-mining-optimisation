@@ -3,7 +3,7 @@ package com.company;
 public class Variables {
     public static final int SECOND = 1000;
 
-    public static final int WORKER_TABLE_DATA_TIMEOUT = 10 * SECOND;
+    public static final int GRAPHIC_CARD_TABLE_DATA_TIMEOUT = 10 * SECOND;
     public static final int FUND_CONVERSION_RATE = 60 * SECOND;
 
     public static final String BITTREX_API_KEY = "a6b16f3095fd47de9e466c4980266b34";

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Timer;
 
 import static com.company.Variables.FUND_CONVERSION_RATE;
-import static com.company.Variables.WORKER_TABLE_DATA_TIMEOUT;
+import static com.company.Variables.GRAPHIC_CARD_TABLE_DATA_TIMEOUT;
 
 // TODO: learn about Spring and add to the app
 // TODO: add dependencies to maven
@@ -38,7 +38,7 @@ public class Main {
     private static void ScheduleRecurrentJobs() {
         WorkersTableCleaning workersTableCleaning = new WorkersTableCleaning();
         Timer timer1 = new Timer(true);
-        timer1.scheduleAtFixedRate(workersTableCleaning,0 , WORKER_TABLE_DATA_TIMEOUT / 2);
+        timer1.scheduleAtFixedRate(workersTableCleaning,0 , GRAPHIC_CARD_TABLE_DATA_TIMEOUT / 2);
 
         ExchangesFundConversion exchangesFundConversion = new ExchangesFundConversion();
         Timer timer2 = new Timer(true);

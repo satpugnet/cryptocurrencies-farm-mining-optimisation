@@ -1,6 +1,6 @@
 package com.company.Database;
 
-import com.company.crypto_currencies.CurrencyShortName;
+import com.company.Server.JsonFormat.General.MinedCurrencyShortName;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,6 +9,6 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class GraphicCardLiveData {
-    private CurrencyShortName currencyShortName;
+    private MinedCurrencyShortName currencyShortName;
     private BigDecimal profitPerSecond;
 }

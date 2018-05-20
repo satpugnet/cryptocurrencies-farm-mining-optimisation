@@ -1,16 +1,15 @@
 package com.company.Server;
 
 import com.company.Database.DatabaseAccessor;
-import com.company.OptimalMining.MiningConfig.MiningConfiguration;
 import com.company.Server.AccessSecurity.RequestAuthorisation;
+import com.company.Server.JsonFormat.ClientJson.MiningConfigurationRequest;
+import com.company.Server.JsonFormat.ClientJson.ReportMiningDiagnosisRequest;
+import com.company.Server.JsonFormat.ServerJson.MiningConfigurationResponse;
 import com.company.Server.RequestHandler.CryptoCurrencyOptimalMiningConfigHandler;
-import com.company.Server.JsonFormat.ConfigRequest.ConfigRequestProperties;
-import com.company.Server.JsonFormat.MiningDiagnosis.MiningDiagnosisProperties;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import com.company.crypto_currencies.currencies_retrieval.CoinWarzCurrencyInformationRetriever;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -37,11 +36,15 @@ public class HttpRequestHandling {
 
     public static class ClientConfigOptimal implements HttpHandler {
         @Override
-        public void handle(HttpExchange t) throws IOException {
-            if(t.getRequestMethod().equalsIgnoreCase("PUT")) {
-                handleMiningDiagnosis(t);
-            } else if(t.getRequestMethod().equalsIgnoreCase("POST")){
-                handleMiningConfigRequest(t);
+        public void handle(HttpExchange t) {
+            try {
+                if (t.getRequestMethod().equalsIgnoreCase("PUT")) {
+                    handleMiningDiagnosis(t);
+                } else if (t.getRequestMethod().equalsIgnoreCase("POST")) {
+                    handleMiningConfigRequest(t);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -52,15 +55,15 @@ public class HttpRequestHandling {
             String requestBody = IOUtils.toString(rb, StandardCharsets.US_ASCII);
             rb.close();
             Gson g = new Gson();
-            ConfigRequestProperties properties = g.fromJson(requestBody, ConfigRequestProperties.class);
+            MiningConfigurationRequest properties = g.fromJson(requestBody, MiningConfigurationRequest.class);
             if (!RequestAuthorisation.hasAuthorisedId(properties.getUserEmail())) {
                 t.sendResponseHeaders(404, 0);
                 t.getResponseBody().close();
                 logger.warn("Unauthorised request received");
                 return;
             } else {
-                MiningConfiguration responseConfig = new CryptoCurrencyOptimalMiningConfigHandler().handle(properties);
-                String response = responseConfig.toJson().toString();
+                MiningConfigurationResponse miningConfigurationResponse = new CryptoCurrencyOptimalMiningConfigHandler().handle(properties);
+                String response = g.toJson(miningConfigurationResponse, MiningConfigurationResponse.class);
                 t.sendResponseHeaders(200, response.length());
                 OutputStream os = t.getResponseBody();
                 os.write(response.getBytes());
@@ -76,9 +79,9 @@ public class HttpRequestHandling {
             String requestBody = IOUtils.toString(rb, StandardCharsets.US_ASCII);
             rb.close();
             Gson g = new Gson();
-            MiningDiagnosisProperties properties = g.fromJson(requestBody, MiningDiagnosisProperties.class);
+            ReportMiningDiagnosisRequest properties = g.fromJson(requestBody, ReportMiningDiagnosisRequest.class);
             DatabaseAccessor db = new DatabaseAccessor(properties.getUserEmail());
-            db.updateOrInsertWorker(properties.getWorkerName(), properties.getCurrency(), properties.getHashrate());
+            db.updateOrInsertWorkerGraphicCard(properties.getWorkerName(), properties.getData().getGpu(), properties.getData().getCurrency().toString(), properties.getData().getHashRate());
             t.sendResponseHeaders(200, 0);
             t.getResponseBody().close();
             logger.info("Mining diagnosis request completed");

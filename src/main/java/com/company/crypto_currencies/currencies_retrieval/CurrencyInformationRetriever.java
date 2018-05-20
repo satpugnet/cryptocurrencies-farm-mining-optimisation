@@ -1,14 +1,14 @@
 package com.company.crypto_currencies.currencies_retrieval;
 
-import com.company.crypto_currencies.CurrencyShortName;
+import com.company.Server.JsonFormat.General.MinedCurrencyShortName;
 
 import java.util.List;
 
 public interface CurrencyInformationRetriever {
 
-    public double getLiveExchange(CurrencyShortName currencyComparedFrom);
+    public double getLiveExchange(MinedCurrencyShortName currencyComparedFrom);
     public void setDataMinUpdatingRate(long timeInMilliseconds);
-    double getDifficulty(CurrencyShortName currentCurrencyShortNames);
-    double getBlockReward(CurrencyShortName currentCurrencyShortNames);
-    public List<CurrencyShortName> getOrderedListRecommendedMining();
+    double getDifficulty(MinedCurrencyShortName currentCurrencyShortNames);
+    double getBlockReward(MinedCurrencyShortName currentCurrencyShortNames);
+    public List<MinedCurrencyShortName> getOrderedListRecommendedMining();
 }

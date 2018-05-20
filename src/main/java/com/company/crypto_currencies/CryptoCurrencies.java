@@ -9,10 +9,10 @@ public abstract class CryptoCurrencies extends Currency {
     }
 
     public double getDifficulty() {
-        return currencyInformationRetriever.getDifficulty(currentCurrencyShortNames);
+        return currencyInformationRetriever.getDifficulty(currentMinedCurrencyShortNames);
     }
 
     public double getBlockReward() {
-        return currencyInformationRetriever.getBlockReward(currentCurrencyShortNames);
+        return currencyInformationRetriever.getBlockReward(currentMinedCurrencyShortNames);
     }
 }

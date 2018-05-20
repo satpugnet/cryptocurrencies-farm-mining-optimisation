@@ -1,7 +1,8 @@
 package com.company.Database;
 
-import com.company.Server.JsonFormat.ConfigRequest.SystemConfig.GPU.GraphicCard;
-import com.company.crypto_currencies.CurrencyShortName;
+import com.company.Server.JsonFormat.General.GPU.GPU;
+import com.company.Server.JsonFormat.General.GPU.GraphicCard;
+import com.company.Server.JsonFormat.General.MinedCurrencyShortName;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static com.company.Database.QueryType.QUERY;
 import static com.company.Database.QueryType.UPDATE;
-import static com.company.Variables.WORKER_TABLE_DATA_TIMEOUT;
+import static com.company.Variables.GRAPHIC_CARD_TABLE_DATA_TIMEOUT;
 
 
 public class DatabaseAccessor {
@@ -47,7 +48,7 @@ public class DatabaseAccessor {
         List<GraphicCardLiveData> result = new LinkedList<>();
         try {
             while(graphicCardLiveData.next()) {
-                CurrencyShortName currency = CurrencyShortName.valueOf(graphicCardLiveData.getString("currency"));
+                MinedCurrencyShortName currency = MinedCurrencyShortName.valueOf(graphicCardLiveData.getString("currency"));
                 BigDecimal profit_per_second = new BigDecimal(graphicCardLiveData.getString("profit_per_second"));
                 result.add(GraphicCardLiveData.builder().currencyShortName(currency).profitPerSecond(profit_per_second).build());
             }
@@ -61,21 +62,21 @@ public class DatabaseAccessor {
         return result;
     }
 
-    public void reactualiseWorkerTable() {
-        logger.info("Cleaning workers table");
-        String sql = "UPDATE workers SET hashrate=0.0 WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + WORKER_TABLE_DATA_TIMEOUT +  " milliseconds');";
+    public void reactualiseGraphicCardTable() {
+        logger.info("Cleaning graphic_cards table");
+        String sql = "UPDATE graphic_cards SET hashrate=0.0 WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + GRAPHIC_CARD_TABLE_DATA_TIMEOUT +  " milliseconds');";
         executeRequest(sql, UPDATE);
         // TODO: clean the workers_configuration as well
     }
 
-    public void updateOrInsertWorker(String workerName, String currency, Float hashrate) {
-        logger.info("Updating worker table with: " + workerName + ", " + currency + ", " + hashrate);
+    public void updateOrInsertWorkerGraphicCard(String workerName, GPU gpu, String currency, Float hashrate) {
+        logger.info("Updating worker table with: " + workerName);
         // Create or update worker
-        String sql = "INSERT INTO workers (user_id, worker_name, mined_currency, hashrate, timestamp) " +
-                "VALUES ((SELECT id FROM users WHERE email='" + userEmail + "'), '" + workerName + "', '" + currency + "', " + hashrate + ", CURRENT_TIMESTAMP) " +
+        String sql = "INSERT INTO workers (user_id, worker_name) " +
+                "VALUES ((SELECT id FROM users WHERE email='" + userEmail + "'), '" + workerName + "') " +
                 "ON CONFLICT (user_id, worker_name) " +
                 "DO UPDATE SET user_id=(SELECT id FROM users WHERE email='" + userEmail + "'), " +
-                "    worker_name='" + workerName + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP " +
+                "    worker_name='" + workerName + "' " +
                 "RETURNING workers.id";
         ResultSet responseWorkerTable = executeRequest(sql, QUERY);
         String worker_id = null;
@@ -85,38 +86,57 @@ public class DatabaseAccessor {
             logger.warn("SQL exception while inserting worker configurations (" + sql + "): " + e);
         }
         closeStatementAndResultSet();
-        // TODO: find a better way to initialise (no need to redo on every hashrate update) (make the client send on request when booting to create the record in the db same for workers
 
-        logger.info("Inserting into workers_configuration");
-        // Create workers_configuration if non-existing
-        String sql2 = "INSERT INTO workers_configuration (worker_id,activate_mining) " +
-                "VALUES (" + worker_id + ", true) " +
-                "ON CONFLICT (worker_id) DO UPDATE SET worker_id=excluded.worker_id " +
-                "RETURNING workers_configuration.id";
-        ResultSet responseWorkerConfiguration = executeRequest(sql2, QUERY);
-        String worker_configuration_id = null;
+        logger.info("Updating graphic card table with: " + workerName + ", " + currency + ", " + hashrate);
+        // Create or update graphic_card
+        String sql2 = "INSERT INTO graphic_cards (worker_id, graphic_card_id, mined_currency, hashrate, timestamp, graphic_card_name) " +
+                "VALUES ('" + worker_id + "', '" + gpu.getId() + "', '" + currency + "', " + hashrate + ", CURRENT_TIMESTAMP, " + gpu.getGraphicCard() + ") " +
+                "ON CONFLICT (worker_id, graphic_card_id) " +
+                "DO UPDATE SET worker_id='" + worker_id + "', " +
+                "    graphic_card_id='" + gpu.getId() + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP, graphic_card_name='" + gpu.getGraphicCard() + "' " +
+                "RETURNING graphic_cards.id";
+        ResultSet responseGraphicCardTable = executeRequest(sql2, QUERY);
+        String graphic_card_id = null;
         try {
-            worker_configuration_id = responseWorkerConfiguration.getString("id");
+            graphic_card_id = responseGraphicCardTable.getString("id");
+        } catch (SQLException e) {
+            logger.warn("SQL exception while inserting worker configurations (" + sql2 + "): " + e);
+        }
+        closeStatementAndResultSet();
+
+        // TODO: find a better way to initialise (no need to redo on every hashrate update) (make the client send on request when booting to create the record in the db same for workers
+        logger.info("Inserting into graphic_cards_configuration");
+        // Create graphic_cards_configuration if non-existing
+        String sql3 = "INSERT INTO graphic_cards_configuration (graphic_card_id,activate_mining) " +
+                "VALUES (" + graphic_card_id + ", true) " +
+                "ON CONFLICT (graphic_card_id) DO UPDATE SET graphic_card_id=excluded.graphic_card_id " +
+                "RETURNING graphic_cards_configuration.id";
+        ResultSet responseWorkerConfiguration = executeRequest(sql3, QUERY);
+        String graphic_card_configuration_id = null;
+        try {
+            graphic_card_configuration_id = responseWorkerConfiguration.getString("id");
         } catch (SQLException e) {
             logger.warn("SQL exception while getting the worker configurations (" + sql + "): " + e);
         }
         closeStatementAndResultSet();
 
         logger.info("Inserting into mined_cryptocurrencies");
-        String sql3 = "INSERT INTO mined_cryptocurrencies (worker_configuration_id) " +
-                "VALUES (" + worker_configuration_id + ") " +
+        String sql4 = "INSERT INTO mined_cryptocurrencies (graphic_card_configuration_id) " +
+                "VALUES (" + graphic_card_configuration_id + ") " +
                 "ON CONFLICT DO NOTHING";
-        executeRequest(sql3, UPDATE);
+        executeRequest(sql4, UPDATE);
     }
 
-    public String getWorkerConfigFieldString(String workerName, String field) {
+    public String getGraphicCardConfigFieldString(String workerName, int gpuId, String field) {
         logger.info("Getting config field: " + field);
+        // TODO: change workers_configuration to graphic_cards_configuration
         String sql = "SELECT * " +
                 "FROM users " +
                 "JOIN workers ON users.id=workers.user_id " +
-                "JOIN workers_configuration ON workers.id=workers_configuration.worker_id " +
-                "JOIN mined_cryptocurrencies ON workers_configuration.id=mined_cryptocurrencies.worker_configuration_id " +
-                "WHERE workers.worker_name=\'" + workerName + "\' AND users.email=\'" + userEmail + "\'";
+                "JOIN graphic_cards ON workers.id=graphic_cards.worker_id " +
+                "JOIN graphic_cards_configuration ON graphic_cards.id=graphic_cards_configuration.graphic_card_id " +
+                "JOIN mined_cryptocurrencies ON graphic_cards_configuration.id=mined_cryptocurrencies.graphic_card_configuration_id " +
+                "WHERE graphic_cards.graphic_card_id=\'" + gpuId + "\' AND workers.worker_name=\'" + workerName + "\' AND users.email=\'" + userEmail + "\'";
         ResultSet response = executeRequest(sql, QUERY);
         try {
             return response.getString(field);
@@ -127,8 +147,8 @@ public class DatabaseAccessor {
         return null;
     }
 
-    public Boolean getWorkerConfigFieldBoolean(String workerName, String field) {
-        String booleanField = getWorkerConfigFieldString(workerName, field);
+    public Boolean getWorkerConfigFieldBoolean(String workerName, int gpuId, String field) {
+        String booleanField = getGraphicCardConfigFieldString(workerName, gpuId, field);
         if(booleanField != null) {
             return booleanField.equals("t");
         }
