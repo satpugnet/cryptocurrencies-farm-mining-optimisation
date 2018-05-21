@@ -64,7 +64,7 @@ public class DatabaseAccessor {
 
     public void reactualiseGraphicCardTable() {
         logger.info("Cleaning graphic_cards table");
-        String sql = "UPDATE graphic_cards SET hashrate=0.0 WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + GRAPHIC_CARD_TABLE_DATA_TIMEOUT +  " milliseconds');";
+        String sql = "UPDATE graphic_cards SET hashrate=0.0, mined_currency='N/A' WHERE timestamp < (CURRENT_TIMESTAMP - INTERVAL ' " + GRAPHIC_CARD_TABLE_DATA_TIMEOUT +  " milliseconds');";
         executeRequest(sql, UPDATE);
         // TODO: clean the workers_configuration as well
     }
