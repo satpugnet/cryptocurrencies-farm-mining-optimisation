@@ -90,10 +90,10 @@ public class DatabaseAccessor {
         logger.info("Updating graphic card table with: " + workerName + ", " + currency + ", " + hashrate);
         // Create or update graphic_card
         String sql2 = "INSERT INTO graphic_cards (worker_id, graphic_card_id, mined_currency, hashrate, timestamp, graphic_card_name) " +
-                "VALUES ('" + worker_id + "', '" + gpu.getId() + "', '" + currency + "', " + hashrate + ", CURRENT_TIMESTAMP, " + gpu.getGraphicCard() + ") " +
+                "VALUES ('" + worker_id + "', '" + gpu.getId() + "', '" + currency + "', " + hashrate + ", CURRENT_TIMESTAMP, " + gpu.getGraphicCardName() + ") " +
                 "ON CONFLICT (worker_id, graphic_card_id) " +
                 "DO UPDATE SET worker_id='" + worker_id + "', " +
-                "    graphic_card_id='" + gpu.getId() + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP, graphic_card_name='" + gpu.getGraphicCard() + "' " +
+                "    graphic_card_id='" + gpu.getId() + "', mined_currency='" + currency + "', hashrate=" + hashrate + ", timestamp=CURRENT_TIMESTAMP, graphic_card_name='" + gpu.getGraphicCardName() + "' " +
                 "RETURNING graphic_cards.id";
         ResultSet responseGraphicCardTable = executeRequest(sql2, QUERY);
         String graphic_card_id = null;

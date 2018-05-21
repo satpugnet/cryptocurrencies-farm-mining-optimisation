@@ -7,6 +7,7 @@ public class GPU {
     private GPUType gpuType;
     private long memorySize;
     private GraphicCard graphicCard;
+    private String graphicCardName;
     private int id;
     private int cudaId;
 }
